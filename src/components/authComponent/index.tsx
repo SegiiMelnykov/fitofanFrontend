@@ -52,12 +52,13 @@ const AuthComponent = () => {
         }
         
          catch (error:any) {
-            if (!error?.originalStatus) {
-                setErrMsg('No server responce')
-            } else if (error?.originalStatus === 401) {
+            console.log(error)
+            if (parseInt(error?.originalStatus) === 401) {
                 setErrMsg('Unauthorized') 
-            } else if (error?.originalStatus === 400) {
-                setErrMsg('Missing username or password') 
+            } else if (parseInt(error?.originalStatus) === 403) {
+                setErrMsg('Missing email or password')
+            } else if (parseInt(error?.originalStatus) === 404) {
+                setErrMsg('Wrong email or password') 
             } else {
                 setErrMsg('Login filed')
             }
@@ -104,7 +105,6 @@ const AuthComponent = () => {
                     </Button>
                 </Form>
             </Card>
-             
         </Container>
     );
 };
