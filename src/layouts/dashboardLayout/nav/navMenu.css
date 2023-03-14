@@ -1,0 +1,13 @@
+.nav-menu {
+    height: calc(100vh - 56px);
+}
+
+@media screen and (max-width:575px) {
+    .nav-menu {
+        height:auto
+    }
+}
+
+.nav-menu .nav-link {
+    color: #000000b3;
+}
