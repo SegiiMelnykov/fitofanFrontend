@@ -1,18 +1,15 @@
 import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
-interface IError {
-    data: {
-        massage: string;
-    };
-    status: number;
-}
+import { IError } from 'models/errors';
+
+
 
 
 export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
         baseUrl: 'http://localhost:3000/api/user'
-    }) as BaseQueryFn<string | FetchArgs, unknown, IError, {}>, 
+    }),
     keepUnusedDataFor: 1,
     endpoints: build =>({
         registration: build.mutation<any, any>({

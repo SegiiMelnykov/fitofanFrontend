@@ -3,9 +3,9 @@ import { Button, Card, Container, Form } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useLoginMutation, useRegistrationMutation } from 'store/auth/auth.api';
-import { useAuthActions } from 'hooks/authActions'; 
+import { useAuthActions } from 'hooks/authActions';
 import { pathConst } from 'utils/pathConst';
-import { text } from 'stream/consumers';
+
 
 
 const AuthComponent = () => {
@@ -13,24 +13,22 @@ const AuthComponent = () => {
     const location = useLocation();
     const isLoginpage:boolean = location.pathname === pathConst.LOGIN;
     const emailRef = useRef<HTMLInputElement>(null);
-    const errRef = useRef<HTMLInputElement>(null);
 
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [errMsg, setErrMsg] = useState<string>('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [err, setErr] = useState('');
     const navigate = useNavigate();
 
-    const [login, { isError, isLoading }] = useLoginMutation();
-    const [registeration, { isError: isErrorReg, isLoading: isLoadingReg }] = useRegistrationMutation();
+    const [login, { isLoading: isLoadingLogin }] = useLoginMutation();
+    const [registeration, { isLoading: isLoadingReg }] = useRegistrationMutation();
     const { setCredentials } = useAuthActions();
     const dispatch = useDispatch()
 
     useEffect(() => {
         emailRef.current?.focus();
-    }, [])
-    useEffect(() => {
-        setErrMsg('')
-    }, [email, password])
+        setErr('')
+    }, [isLoginpage])
+
 
     const submit = async (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -48,23 +46,13 @@ const AuthComponent = () => {
                 setPassword('')
                 navigate(pathConst.DASHBOARD)
             }
-
+        }
+        catch (error:any) {
+            setErr(error.data.message)
         }
         
-         catch (error:any) {
-            console.log(error)
-            if (parseInt(error?.originalStatus) === 401) {
-                setErrMsg('Unauthorized') 
-            } else if (parseInt(error?.originalStatus) === 403) {
-                setErrMsg('Missing email or password')
-            } else if (parseInt(error?.originalStatus) === 404) {
-                setErrMsg('Wrong email or password') 
-            } else {
-                setErrMsg('Login filed')
-            }
-            errRef.current?.focus()
-        }
     }
+
 
 
     return (
@@ -74,20 +62,21 @@ const AuthComponent = () => {
         >
             <Card style={{ width: 600 }} className="p-5">
                 <h2 className='m-auto'>{isLoginpage ? 'Sign in' : 'Sign up'}</h2>
-                <p>{isLoading && 'Loading...'}</p>
-                <p style={{ color: 'red', textAlign: 'center' }}>{isError && errMsg}</p>
+                <p>{(isLoadingLogin || isLoadingReg) && 'Loading...'}</p>
+                <p style={{ color: 'red', textAlign: 'center' }}> {err}</p>
                 <Form className='d-flex flex-column'>
                     <Form.Control 
-                        className='mt-2' 
+                        className='mt-2'
+                        type='email'
                         placeholder='email'
                         ref={emailRef}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => { setErr(''); setEmail(e.target.value)}}
                     />
                     <Form.Control 
                         className='mt-2' 
                         placeholder='password'
                         type='password'
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => { setErr(''); setPassword(e.target.value)}}
                     />
                     <div className='mt-2 align-self-start'>
                         {isLoginpage ? 

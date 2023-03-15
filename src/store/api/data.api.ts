@@ -1,12 +1,9 @@
 import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import { ITask } from "models/models";
 
-interface IError {
-    data: {
-        massage: string;
-    };
-    status: number;
-}
+import { IError } from "models/errors";
+
+
 
 
 export const taskApi = createApi({

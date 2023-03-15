@@ -13,9 +13,23 @@ const Taskslist = () => {
         return <p>Loading...</p>
     }
 
-    if (isError) {
-        return <p>error</p>
-    }
+    if (error) {
+        if ('status' in error) {
+          // you can access all properties of `FetchBaseQueryError` here
+          const errMsg = 'status' in error ? error.data.message : error
+          
+          return (
+            <div>
+              <div>An error has occurred:</div>
+              <div>{errMsg}</div>
+            </div>
+          )
+        }
+        else {
+            // you can access all properties of `SerializedError` here
+            return <div>{error.message}</div>
+        }
+      }
 
     if (tasks && tasks.length === 0) {
         return (
